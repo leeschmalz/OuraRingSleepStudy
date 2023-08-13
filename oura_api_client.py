@@ -24,7 +24,7 @@ def getSleepData(day='2023-08-09'):
     }
 
     response = requests.request('GET', url, headers=headers, params=params)
-
+    
     return response.json()['data'][0]
 
 def parseBedTimefromSleep(sleep_data):
@@ -34,6 +34,7 @@ def parseBedTimefromSleep(sleep_data):
     return bedtime_start, bedtime_end
 
 def parseHRfromSleep(sleep_data):
+    id = sleep_data['id']
     hr = sleep_data['heart_rate']
 
     timestamp = datetime.fromisoformat(hr['timestamp'])
@@ -42,7 +43,7 @@ def parseHRfromSleep(sleep_data):
     result = []
     for item in hr['items']:
         if item is not None:
-            result.append((timestamp, item))
+            result.append((id, timestamp, item))
         timestamp += interval
 
     return result
@@ -51,14 +52,15 @@ def writeTimeSeriesData(data, file_name, value_column_name):
     with open(file_name, mode='w', newline='') as file:
         writer = csv.writer(file)
 
-        writer.writerow(['time', value_column_name])
+        writer.writerow(['id', 'time', value_column_name])
 
         for row in data:
             # Convert the datetime object to a string, if needed
-            time_str = row[0].strftime('%Y-%m-%d %H:%M')
-            value = row[1]
+            id = row[0]
+            time_str = row[1].strftime('%Y-%m-%d %H:%M')
+            value = row[2]
 
-            writer.writerow([time_str, value])
+            writer.writerow([id, time_str, value])
 
     print(f"{file_name} written successfully.")
 
