@@ -5,8 +5,7 @@ from tqdm import tqdm
 dates = [datetime.strftime(datetime.strptime('2022-01-01', '%Y-%m-%d') + timedelta(days=i), '%Y-%m-%d') for i in range(0, 595)]
 
 for date in tqdm(dates):
-    # TODO: Handle days where Ring was dead or not worn and no data was collected
-    # this automatically skips naps (returns first sleep of each day)
+    # automatically skips naps and days where the ring was dead or not worn
     sleep_data = getSleepData(date)
 
     if sleep_data is None:
