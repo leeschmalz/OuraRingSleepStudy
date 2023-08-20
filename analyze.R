@@ -41,13 +41,10 @@ ggplot(sleep_data, aes(x=mins_from_start, y=hr, color=alcohol_bin, group=sleep_i
   theme_bw()
 
 ggplot() +
-  #geom_line(data = sleep_data %>% filter(sleep_id %in% sample(unique(sleep_data$sleep_id), 40)), mapping=aes(x=mins_from_start, y=hr, color=alcohol_bin, group=sleep_id), alpha=0.4) +
+  #geom_line(data = sleep_data, mapping=aes(x=mins_from_start, y=hr, color=alcohol_bin, group=sleep_id), alpha=0.4) +
   geom_smooth(data = sleep_data, method="loess", se=FALSE, mapping=aes(x=mins_from_start, y=hr, color=alcohol_bin, group=alcohol_bin)) +
   labs(color = "Number of \nAlcoholic Drinks") +
   theme_bw()
-
-ggplot() +
-  geom_line(data = sleep_data %>% filter(row_number() == 1), mapping=aes(x=mins_from_start, y=hr, color=alcohol_bin, group=sleep_id), alpha=0.4)
 
 avg_hr_data <- sleep_data %>%
   group_by(sleep_id, alcohol_bin) %>%
