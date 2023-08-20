@@ -25,7 +25,17 @@ def getSleepData(day='2023-08-09'):
 
     response = requests.request('GET', url, headers=headers, params=params)
     
-    return response.json()['data'][0]
+    if response.json()['data'] == []:
+        # handle case where ring was dead or not worn
+        return None
+    
+    # get first sleep where type is 'long_sleep'
+    for sleep in response.json()['data']:
+        if sleep['type'] == 'long_sleep':
+            return sleep
+    else:
+        # if no long_sleep's
+        return None
 
 def parseBedTimefromSleep(sleep_data):
     bedtime_start = datetime.fromisoformat(sleep_data['bedtime_start'])
@@ -65,10 +75,10 @@ def writeTimeSeriesData(data, file_name, value_column_name):
     print(f"{file_name} written successfully.")
 
 if __name__ == '__main__':
-    sleep = getSleepData()
+    sleep = getSleepData('2022-04-06')
     pretty_sleep = json.dumps(sleep, indent=4)  # Indent with 4 spaces
     print(pretty_sleep)
     hr = parseHRfromSleep(sleep)
     writeTimeSeriesData(hr, 
-                        file_name='./data/heartrate_sleep_example.csv', 
-                        value_column_name='heartrate')
+                       file_name='./data/heartrate_sleep_example.csv', 
+                       value_column_name='heartrate')
